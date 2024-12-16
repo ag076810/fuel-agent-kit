@@ -11,7 +11,7 @@ export class FuelAgent {
     }
   }
 
-  async invoke(input: string) {
+  async execute(input: string) {
     const response = await agentExector.invoke({
       input,
     });

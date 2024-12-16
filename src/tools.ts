@@ -1,5 +1,6 @@
 import { tool } from '@langchain/core/tools';
-import { Provider, Wallet } from 'fuels';
+import { bn, Provider, Wallet } from 'fuels';
+import { MiraAmm, type PoolId } from 'mira-dex-ts';
 import { z } from 'zod';
 
 export const transferToWallet = async ({
@@ -32,4 +33,58 @@ export const transferTool = tool(transferToWallet, {
   }),
 });
 
-export const tools = [transferTool];
+export const swapEthForUSDC = async ({ amount }: { amount: string }) => {
+  const provider = await Provider.create(
+    'https://mainnet.fuel.network/v1/graphql',
+  );
+  const wallet = Wallet.fromPrivateKey(
+    process.env.FUEL_WALLET_PRIVATE_KEY as string,
+    provider,
+  );
+
+  const amountInWei = bn.parseUnits(amount);
+
+  const pools: PoolId[] = [
+    [
+      {
+        bits: provider.getBaseAssetId(),
+      },
+      {
+        bits: '0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b', // USDC
+      },
+      true,
+    ],
+  ];
+
+  const miraAmm = new MiraAmm(wallet);
+
+  const response = await miraAmm.swapExactInput(
+    amountInWei,
+    {
+      bits: provider.getBaseAssetId(),
+    },
+    0,
+    pools,
+    // 7 days from now in milliseconds
+    bn(Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7),
+  );
+
+  const res = await wallet.sendTransaction(response);
+
+  const { id, receipts, status } = await res.waitForResult();
+
+  return {
+    status,
+    id,
+  };
+};  
+
+export const swapEthForUSDCTool = tool(swapEthForUSDC, {
+  name: 'swap_eth_for_usdc',
+  description: 'Swap ETH for USDC on Mira',
+  schema: z.object({
+    amount: z.string().describe('The ETH amount to swap'),
+  }),
+});
+
+export const tools = [transferTool, swapEthForUSDCTool];
