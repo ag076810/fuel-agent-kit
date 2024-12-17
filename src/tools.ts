@@ -2,34 +2,55 @@ import { tool } from '@langchain/core/tools';
 import { bn, Provider, Wallet } from 'fuels';
 import { MiraAmm, type PoolId } from 'mira-dex-ts';
 import { z } from 'zod';
+import { getAllVerifiedFuelAssets } from './utils/assets.js';
+import { getTxExplorerUrl } from './utils/explorer.js';
 
 export const transferToWallet = async ({
   to,
-  amount,
+  amount, // eg. 0.2 ETH
+  symbol,
 }: {
   to: string;
   amount: number;
+  symbol: string;
 }) => {
   const provider = await Provider.create(
-    'https://testnet.fuel.network/v1/graphql',
+    'https://mainnet.fuel.network/v1/graphql',
   );
   const wallet = Wallet.fromPrivateKey(
     process.env.FUEL_WALLET_PRIVATE_KEY as string,
     provider,
   );
 
-  const response = await wallet.transfer(to, amount, provider.getBaseAssetId());
-  const { id } = await response.waitForResult();
+  const allAssets = await getAllVerifiedFuelAssets();
+  const asset = allAssets.find((asset) => asset.symbol === symbol);
+  const assetId = asset?.assetId;
 
-  return id;
+  if (!assetId) {
+    throw new Error(`Asset ${symbol} not found`);
+  }
+
+  const response = await wallet.transfer(
+    to,
+    bn.parseUnits(amount.toString(), asset.decimals),
+    assetId,
+  );
+  const { id, isStatusFailure } = await response.waitForResult();
+
+  if (isStatusFailure) {
+    console.error('TX failed');
+  }
+
+  return `Sucessfully transferred ${amount}${symbol} to ${to}. Explorer link: ${getTxExplorerUrl(id)}`;
 };
 
 export const transferTool = tool(transferToWallet, {
   name: 'fuel_transfer',
-  description: "Transfer funds from the user's wallet to another",
+  description: 'Transfer any verified Fuel asset to another wallet',
   schema: z.object({
     to: z.string().describe('The wallet address to transfer to'),
     amount: z.number().describe('The amount to transfer'),
+    symbol: z.string().describe('The asset symbol to transfer. eg. USDC, ETH'),
   }),
 });
 
@@ -71,13 +92,13 @@ export const swapEthForUSDC = async ({ amount }: { amount: string }) => {
 
   const res = await wallet.sendTransaction(response);
 
-  const { id, receipts, status } = await res.waitForResult();
+  const { id, status } = await res.waitForResult();
 
   return {
     status,
     id,
   };
-};  
+};
 
 export const swapEthForUSDCTool = tool(swapEthForUSDC, {
   name: 'swap_eth_for_usdc',
