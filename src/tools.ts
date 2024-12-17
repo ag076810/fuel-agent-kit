@@ -3,6 +3,7 @@ import { bn, Provider, Wallet } from 'fuels';
 import { MiraAmm, type PoolId } from 'mira-dex-ts';
 import { z } from 'zod';
 import { getAllVerifiedFuelAssets } from './utils/assets.js';
+import { getTxExplorerUrl } from './utils/explorer.js';
 
 export const transferToWallet = async ({
   to,
@@ -40,7 +41,7 @@ export const transferToWallet = async ({
     console.error('TX failed');
   }
 
-  return id;
+  return `Sucessfully transferred ${amount}${symbol} to ${to}. Explorer link: ${getTxExplorerUrl(id)}`;
 };
 
 export const transferTool = tool(transferToWallet, {
@@ -51,7 +52,6 @@ export const transferTool = tool(transferToWallet, {
     amount: z.number().describe('The amount to transfer'),
     symbol: z.string().describe('The asset symbol to transfer. eg. USDC, ETH'),
   }),
-  responseFormat: `Successful transfer. TX ID: {id}`,
 });
 
 export const swapEthForUSDC = async ({ amount }: { amount: string }) => {
