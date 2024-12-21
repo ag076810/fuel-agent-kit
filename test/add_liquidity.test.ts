@@ -2,21 +2,21 @@ import { test } from 'vitest';
 import { addLiquidity } from '../src/mira/addLiquidity.js';
 import { FuelAgent } from '../src/FuelAgent.js';
 
-// test(
-//   'add liquidity',
-//   {
-//     timeout: 30000,
-//   },
-//   async () => {
-//     console.log(
-//       await addLiquidity({
-//         amount0: 0.1,
-//         asset0Symbol: 'USDC',
-//         asset1Symbol: 'USDT',
-//       }),
-//     );
-//   },  
-// );
+test(
+  'add liquidity',
+  {
+    timeout: 30000,
+  },
+  async () => {
+    console.log(
+      await addLiquidity({
+        amount0: 0.0001,
+        asset0Symbol: 'ETH',
+        asset1Symbol: 'USDT',
+      }),
+    );
+  },  
+);
 
 test(
     'add 0.1 USDC liquidity to USDC/USDT pool',
