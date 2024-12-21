@@ -1,14 +1,11 @@
 import { test } from 'vitest';
-import { supplyCollateral } from '../src/swaylend/supply.js';
+import { FuelAgent } from '../dist/index.js';
 
 test(
   'supplyCollateral',
   async () => {
-    const tx = await supplyCollateral({
-      amount: '12',
-      symbol: 'USDT',
-    });
-    console.log('TX', tx);
+    const agent = new FuelAgent();
+    console.log(await agent.execute('Supply 2 USDT as collateral'));
   },
   {
     timeout: 500000,
