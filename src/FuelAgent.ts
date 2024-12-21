@@ -1,4 +1,5 @@
 import { agentExector } from './agent.js';
+import { addLiquidity, type AddLiquidityParams } from './mira/addLiquidity.js';
 import { swapExactInput, type SwapExactInputParams } from './mira/swap.js';
 import { borrowAsset, type BorrowAssetParams } from './swaylend/borrow.js';
 import {
@@ -43,5 +44,9 @@ export class FuelAgent {
 
   async borrowAsset(params: BorrowAssetParams) {
     return await borrowAsset(params);
+  }
+
+  async addLiquidity(params: AddLiquidityParams) {
+    return await addLiquidity(params);
   }
 }

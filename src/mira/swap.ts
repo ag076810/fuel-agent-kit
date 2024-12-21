@@ -89,3 +89,4 @@ export const swapExactInput = async ({
 
   return `Successfully swapped ${amount} ${fromSymbol} for ${toSymbol}. Explorer link: ${getTxExplorerUrl(id)}`;
 };
+
