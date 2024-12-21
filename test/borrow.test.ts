@@ -1,13 +1,11 @@
 import { test } from 'vitest';
-import { borrowAsset } from '../src/swaylend/borrow.js';
+import { FuelAgent } from '../dist/index.js';
 
 test(
   'borrowAsset',
   async () => {
-    const tx = await borrowAsset({
-      amount: '11',
-    });
-    console.log('TX', tx);
+    const agent = new FuelAgent();
+    console.log(await agent.execute('Borrow 11 USDC'));
   },
   {
     timeout: 500000,

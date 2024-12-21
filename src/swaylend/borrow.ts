@@ -11,7 +11,7 @@ export type BorrowAssetParams = {
 };
 
 export const borrowAsset = async ({ amount }: BorrowAssetParams) => {
-  const { wallet } = await setupWallet();
+  const { wallet, provider } = await setupWallet();
 
   const marketContractId =
     '0x657ab45a6eb98a4893a99fd104347179151e8b3828fd8f2a108cc09770d1ebae';
@@ -75,7 +75,7 @@ export const borrowAsset = async ({ amount }: BorrowAssetParams) => {
     .callParams({
       forward: {
         amount: 0,
-        assetId: assetId,
+        assetId: provider.getBaseAssetId(),
       },
     })
     .addContracts([pythContract])
