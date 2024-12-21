@@ -1,0 +1,88 @@
+import { arrayify, bn, DateTime, Provider, Wallet } from 'fuels';
+import { Market, type PriceDataUpdateInput } from '../types/Market.js';
+import { getAllVerifiedFuelAssets } from '../utils/assets.js';
+import { PythContract } from '@pythnetwork/pyth-fuel-js';
+import { HermesClient } from '@pythnetwork/hermes-client';
+import { setupWallet } from '../utils/setup.js';
+
+export type BorrowAssetParams = {
+  amount: string;
+};
+
+export const borrowAsset = async ({ amount }: BorrowAssetParams) => {
+  const { wallet } = await setupWallet();
+
+  const marketContractId =
+    '0x657ab45a6eb98a4893a99fd104347179151e8b3828fd8f2a108cc09770d1ebae';
+  const marketContract: Market = new Market(marketContractId, wallet);
+
+  const allAssets = await getAllVerifiedFuelAssets();
+  const asset = allAssets.find((asset) => asset.symbol === 'USDC'); // base asset
+  const assetId: any = asset?.assetId;
+
+  const weiAmount = bn.parseUnits(amount, asset?.decimals);
+
+  // fetch configs
+  const { value: marketConfiguration } = await marketContract.functions
+    .get_market_configuration()
+    .get();
+
+  const { value: collateralConfigurations } = await marketContract.functions
+    .get_collateral_configurations()
+    .get();
+
+  const priceFeedAssets: Map<string, string> = new Map();
+
+  priceFeedAssets.set(
+    marketConfiguration.base_token_price_feed_id,
+    marketConfiguration.base_token.bits,
+  );
+
+  // fetch oracle data from pyth
+  for (const [assetId, collateralConfiguration] of Object.entries(
+    collateralConfigurations,
+  )) {
+    priceFeedAssets.set(collateralConfiguration.price_feed_id, assetId);
+  }
+
+  const priceFeedIds = Array.from(priceFeedAssets.keys());
+
+  const client = new HermesClient('https://hermes.pyth.network');
+
+  const priceUpdates: any = await client.getLatestPriceUpdates(priceFeedIds);
+
+  const buffer = Buffer.from(priceUpdates.binary.data[0], 'hex');
+  const updateData = [arrayify(buffer)];
+
+  const pythContract = new PythContract(
+    '0x1c86fdd9e0e7bc0d2ae1bf6817ef4834ffa7247655701ee1b031b52a24c523da',
+    wallet,
+  );
+
+  // before initiating the borrow make sure the wallet has some small amount of USDC for the oracle fee
+  const priceUpdateData: PriceDataUpdateInput = {
+    update_fee: 0,
+    publish_times: priceUpdates.parsed.map((parsedPrice: any) =>
+      DateTime.fromUnixSeconds(parsedPrice.price.publish_time).toTai64(),
+    ),
+    price_feed_ids: priceFeedIds,
+    update_data: updateData,
+  };
+
+  const { waitForResult } = await marketContract.functions
+    .withdraw_base((+amount).toFixed(0), priceUpdateData)
+    .callParams({
+      forward: {
+        amount: 0,
+        assetId: assetId,
+      },
+    })
+    .addContracts([pythContract])
+    .call();
+
+  // Wait for the transaction to complete
+  const transactionResult = await waitForResult();
+
+  // Return the transaction ID
+  return transactionResult.transactionId;
+};

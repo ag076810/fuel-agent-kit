@@ -1,15 +1,12 @@
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { ChatOpenAI } from '@langchain/openai';
-import {
-  borrowAsset,
-  supplyCollateral,
-  transferTool,
-  transferToWallet,
-} from './tools.js';
 import { AIMessage } from '@langchain/core/messages';
 import { createToolCallingAgent, AgentExecutor } from 'langchain/agents';
 import { tools } from './tools.js';
 import { swapExactInput } from './mira/swap.js';
+import { transfer } from './transfers/transfers.js';
+import { supplyCollateral } from './swaylend/supply.js';
+import { borrowAsset } from './swaylend/borrow.js';
 
 export const prompt = ChatPromptTemplate.fromMessages([
   [
@@ -27,7 +24,7 @@ export const getModel = () => {
     apiKey: process.env.OPENAI_API_KEY,
   });
 
-  const boundModel = model.bindTools([transferTool]);
+  const boundModel = model.bindTools(tools);
 
   return boundModel;
 };
@@ -50,7 +47,7 @@ export async function handleModelResponse(response: AIMessage) {
           toolCall.args?.symbol
         ) {
           try {
-            return await transferToWallet({
+            return await transfer({
               to: toolCall.args.to,
               amount: toolCall.args.amount,
               symbol: toolCall.args.symbol,

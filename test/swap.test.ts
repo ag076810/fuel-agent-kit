@@ -1,5 +1,4 @@
 import { test } from 'vitest';
-import { FuelAgent } from '../src/FuelAgent.js';
 import { swapExactInput } from '../src/mira/swap.js';
 
 test(
@@ -7,7 +6,7 @@ test(
   async () => {
     console.log(
       await swapExactInput({
-        amount: 5,
+        amount: '5',
         fromSymbol: 'USDT',
         toSymbol: 'ETH',
       }),

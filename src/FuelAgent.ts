@@ -1,4 +1,14 @@
 import { agentExector } from './agent.js';
+import { swapExactInput, type SwapExactInputParams } from './mira/swap.js';
+import { borrowAsset, type BorrowAssetParams } from './swaylend/borrow.js';
+import {
+  supplyCollateral,
+  type SupplyCollateralParams,
+} from './swaylend/supply.js';
+import {
+  transfer as walletTransfer,
+  type TransferParams,
+} from './transfers/transfers.js';
 
 export class FuelAgent {
   constructor() {
@@ -17,5 +27,21 @@ export class FuelAgent {
     });
 
     return response;
+  }
+
+  async swapExactInput(params: SwapExactInputParams) {
+    return await swapExactInput(params);
+  }
+
+  async transfer(params: TransferParams) {
+    return await walletTransfer(params);
+  }
+
+  async supplyCollateral(params: SupplyCollateralParams) {
+    return await supplyCollateral(params);
+  }
+
+  async borrowAsset(params: BorrowAssetParams) {
+    return await borrowAsset(params);
   }
 }

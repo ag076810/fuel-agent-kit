@@ -1,12 +1,11 @@
 import { test } from 'vitest';
-import { FuelAgent } from '../src/FuelAgent.js';
-import { borrowAsset } from '../src/tools.js';
+import { borrowAsset } from '../src/swaylend/borrow.js';
 
 test(
   'borrowAsset',
   async () => {
     const tx = await borrowAsset({
-      amount: 11,
+      amount: '11',
     });
     console.log('TX', tx);
   },
