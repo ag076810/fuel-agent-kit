@@ -1,6 +1,11 @@
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { ChatOpenAI } from '@langchain/openai';
-import { supplyCollateral, transferTool, transferToWallet } from './tools.js';
+import {
+  borrowAsset,
+  supplyCollateral,
+  transferTool,
+  transferToWallet,
+} from './tools.js';
 import { AIMessage } from '@langchain/core/messages';
 import { createToolCallingAgent, AgentExecutor } from 'langchain/agents';
 import { tools } from './tools.js';
@@ -89,6 +94,18 @@ export async function handleModelResponse(response: AIMessage) {
           }
         }
         break;
+
+      case 'borrow_asset':
+        if (toolCall.args?.amount) {
+          try {
+            return await borrowAsset({
+              amount: toolCall.args.amount,
+            });
+          } catch (error) {
+            console.error('Error borrowing asset:', error);
+            throw error;
+          }
+        }
     }
     throw new Error('Invalid or unexpected tool call format');
   } else {

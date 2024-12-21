@@ -130,7 +130,6 @@ export const borrowAsset = async ({ amount }: { amount: number }) => {
     provider,
   );
 
-
   const marketContractId =
     '0x657ab45a6eb98a4893a99fd104347179151e8b3828fd8f2a108cc09770d1ebae';
   const marketContract: Market = new Market(marketContractId, wallet);
@@ -177,7 +176,7 @@ export const borrowAsset = async ({ amount }: { amount: number }) => {
     '0x1c86fdd9e0e7bc0d2ae1bf6817ef4834ffa7247655701ee1b031b52a24c523da',
     wallet,
   );
-  
+
   // before initiating the borrow make sure the wallet has some small amount of USDC for the oracle fee
   const priceUpdateData: PriceDataUpdateInput = {
     update_fee: 0,
@@ -214,4 +213,9 @@ export const borrowAssetTool = tool(borrowAsset, {
   }),
 });
 
-export const tools = [transferTool, swapExactInputTool, supplyCollateralTool];
+export const tools = [
+  transferTool,
+  swapExactInputTool,
+  supplyCollateralTool,
+  borrowAssetTool,
+];
