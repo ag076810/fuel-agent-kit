@@ -1,6 +1,7 @@
-import { bn, Provider, Wallet } from 'fuels';
+import { bn, Provider } from 'fuels';
 import { getAllVerifiedFuelAssets } from '../utils/assets.js';
 import { buildPoolId, MiraAmm, ReadonlyMiraAmm } from 'mira-dex-ts';
+import { setupWallet } from '../utils/setup.js';
 
 async function futureDeadline(provider: Provider) {
   const block = await provider.getBlock('latest');
@@ -44,14 +45,7 @@ export const addLiquidity = async ({
     throw new Error('Invalid asset decimals');
   }
 
-  const provider = await Provider.create(
-    'https://mainnet.fuel.network/v1/graphql',
-  );
-
-  const wallet = Wallet.fromPrivateKey(
-    process.env.FUEL_WALLET_PRIVATE_KEY as string,
-    provider,
-  );
+  const { provider, wallet } = await setupWallet();
 
   const amount0InWei = bn.parseUnits(amount0, asset0Decimals);
 
