@@ -1,18 +1,25 @@
-import { bn, Provider, Wallet } from 'fuels';
+import { bn, Provider } from 'fuels';
 import { getAllVerifiedFuelAssets } from '../utils/assets.js';
 import { buildPoolId, MiraAmm } from 'mira-dex-ts';
+import { setupWallet } from '../utils/setup.js';
 
 async function futureDeadline(provider: Provider) {
   const block = await provider.getBlock('latest');
   return block?.height.add(1000) ?? 1000000000;
 }
 
+export type SwapExactInputParams = {
+  amount: string;
+  fromSymbol: string;
+  toSymbol: string;
+};
+
 export const swapExactInput = async ({
   amount,
   fromSymbol,
   toSymbol,
 }: {
-  amount: number;
+  amount: string;
   fromSymbol: string;
   toSymbol: string;
 }) => {
@@ -51,16 +58,9 @@ export const swapExactInput = async ({
     throw new Error(`Asset ${toSymbol} not found`);
   }
 
-  const provider = await Provider.create(
-    'https://mainnet.fuel.network/v1/graphql',
-  );
+  const { wallet, provider } = await setupWallet();
 
-  const wallet = Wallet.fromPrivateKey(
-    process.env.FUEL_WALLET_PRIVATE_KEY as string,
-    provider,
-  );
-
-  const amountInWei = bn.parseUnits(amount.toString(), fromAssetDecimals);
+  const amountInWei = bn.parseUnits(amount, fromAssetDecimals);
 
   const poolId = buildPoolId(fromAssetId, toAssetId, true);
 
