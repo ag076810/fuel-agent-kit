@@ -1,11 +1,17 @@
 import { test } from 'vitest';
 import { FuelAgent } from '../src/FuelAgent.js';
+import { swapExactInput } from '../src/mira/swap.js';
 
 test(
-  'swap eth for usdc',
+  'swap exact input',
   async () => {
-    const agent = new FuelAgent();
-    console.log(await agent.execute('swap 0.005 eth for usdc'));
+    console.log(
+      await swapExactInput({
+        amount: 5,
+        fromSymbol: 'USDT',
+        toSymbol: 'ETH',
+      }),
+    );
   },
   {
     timeout: 30000,
