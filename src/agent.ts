@@ -1,9 +1,15 @@
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { ChatOpenAI } from '@langchain/openai';
-import { transferTool, transferToWallet } from './tools.js';
+import {
+  borrowAsset,
+  supplyCollateral,
+  transferTool,
+  transferToWallet,
+} from './tools.js';
 import { AIMessage } from '@langchain/core/messages';
 import { createToolCallingAgent, AgentExecutor } from 'langchain/agents';
 import { tools } from './tools.js';
+import { swapExactInput } from './mira/swap.js';
 
 export const prompt = ChatPromptTemplate.fromMessages([
   [
@@ -36,28 +42,72 @@ export async function handleModelResponse(response: AIMessage) {
     }
 
     // Verify we have the expected tool and args
-    if (
-      toolCall.name === 'fuel_transfer' &&
-      toolCall.args &&
-      toolCall.args.to &&
-      toolCall.args.amount
-    ) {
-      try {
-        // Execute the actual tool function
-        // You'll need to implement or import this function
-        const transferResult = await transferToWallet({
-          to: toolCall.args.to,
-          amount: toolCall.args.amount,
-        });
+    switch (toolCall.name) {
+      case 'fuel_transfer':
+        if (
+          toolCall.args?.to &&
+          toolCall.args?.amount &&
+          toolCall.args?.symbol
+        ) {
+          try {
+            return await transferToWallet({
+              to: toolCall.args.to,
+              amount: toolCall.args.amount,
+              symbol: toolCall.args.symbol,
+            });
+          } catch (error) {
+            console.error('Error executing fuel transfer:', error);
+            throw error;
+          }
+        }
+        break;
 
-        return transferResult;
-      } catch (error) {
-        console.error('Error executing fuel transfer:', error);
-        throw error;
-      }
-    } else {
-      throw new Error('Invalid or unexpected tool call format');
+      case 'swap_exact_input':
+        if (
+          toolCall.args?.amount &&
+          toolCall.args?.fromSymbol &&
+          toolCall.args?.toSymbol
+        ) {
+          try {
+            return await swapExactInput({
+              amount: toolCall.args.amount,
+              fromSymbol: toolCall.args.fromSymbol,
+              toSymbol: toolCall.args.toSymbol,
+            });
+          } catch (error) {
+            console.error('Error executing swap:', error);
+            throw error;
+          }
+        }
+        break;
+
+      case 'supply_collateral':
+        if (toolCall.args?.amount && toolCall.args?.symbol) {
+          try {
+            return await supplyCollateral({
+              amount: toolCall.args.amount,
+              symbol: toolCall.args.symbol,
+            });
+          } catch (error) {
+            console.error('Error supplying collateral:', error);
+            throw error;
+          }
+        }
+        break;
+
+      case 'borrow_asset':
+        if (toolCall.args?.amount) {
+          try {
+            return await borrowAsset({
+              amount: toolCall.args.amount,
+            });
+          } catch (error) {
+            console.error('Error borrowing asset:', error);
+            throw error;
+          }
+        }
     }
+    throw new Error('Invalid or unexpected tool call format');
   } else {
     throw new Error('No tool calls found in response');
   }
