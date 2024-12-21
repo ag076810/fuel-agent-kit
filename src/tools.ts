@@ -4,6 +4,7 @@ import { swapExactInput } from './mira/swap.js';
 import { transfer } from './transfers/transfers.js';
 import { supplyCollateral } from './swaylend/supply.js';
 import { borrowAsset } from './swaylend/borrow.js';
+import { addLiquidity } from './mira/addLiquidity.js';
 
 export const transferTool = tool(transfer, {
   name: 'fuel_transfer',
@@ -44,9 +45,21 @@ export const borrowAssetTool = tool(borrowAsset, {
   }),
 });
 
+export const addLiquidityTool = tool(addLiquidity, {
+  name: 'add_liquidity',
+  description: 'Add liquidity to a Mira pool',
+  schema: z.object({
+    amount0: z.number().describe('The amount of the first asset to add'),
+    asset0Symbol: z.string().describe('The symbol of the first asset'),
+    asset1Symbol: z.string().describe('The symbol of the second asset'),
+    slippage: z.number().optional().describe('Slippage tolerance (default: 0.01 for 1%)'),
+  }),
+});
+
 export const tools = [
   transferTool,
   swapExactInputTool,
   supplyCollateralTool,
   borrowAssetTool,
+  addLiquidityTool
 ];
