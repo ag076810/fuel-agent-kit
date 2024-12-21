@@ -1,13 +1,12 @@
 import { test } from 'vitest';
 import { FuelAgent } from '../src/FuelAgent.js';
-import { supplyCollateral } from '../src/tools.js';
+import { borrowAsset } from '../src/tools.js';
 
 test(
-  'supplyCollateral',
+  'borrowAsset',
   async () => {
-    const tx = await supplyCollateral({
-      amount: 12,
-      symbol: 'USDT',
+    const tx = await borrowAsset({
+      amount: 11,
     });
     console.log('TX', tx);
   },
