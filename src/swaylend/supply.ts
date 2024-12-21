@@ -2,6 +2,7 @@ import { bn } from 'fuels';
 import { Market } from '../types/Market.js';
 import { getAllVerifiedFuelAssets } from '../utils/assets.js';
 import { setupWallet } from '../utils/setup.js';
+import { getTxExplorerUrl } from '../utils/explorer.js';
 
 export type SupplyCollateralParams = {
   amount: string;
@@ -36,8 +37,5 @@ export const supplyCollateral = async ({
 
   const { id, status } = await tx.waitForResult();
 
-  return {
-    status,
-    id,
-  };
+  return `Successfully supplied ${amount} ${symbol} as collateral. Explorer link: ${getTxExplorerUrl(id)}`;
 };

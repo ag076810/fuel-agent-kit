@@ -4,6 +4,7 @@ import { getAllVerifiedFuelAssets } from '../utils/assets.js';
 import { PythContract } from '@pythnetwork/pyth-fuel-js';
 import { HermesClient } from '@pythnetwork/hermes-client';
 import { setupWallet } from '../utils/setup.js';
+import { getTxExplorerUrl } from '../utils/explorer.js';
 
 export type BorrowAssetParams = {
   amount: string;
@@ -17,7 +18,7 @@ export const borrowAsset = async ({ amount }: BorrowAssetParams) => {
   const marketContract: Market = new Market(marketContractId, wallet);
 
   const allAssets = await getAllVerifiedFuelAssets();
-  const asset = allAssets.find((asset) => asset.symbol === 'USDC'); // base asset
+  const asset = allAssets.find((asset) => asset.symbol === 'USDC'); // We can only borrow USDC
   const assetId: any = asset?.assetId;
 
   const weiAmount = bn.parseUnits(amount, asset?.decimals);
@@ -84,5 +85,5 @@ export const borrowAsset = async ({ amount }: BorrowAssetParams) => {
   const transactionResult = await waitForResult();
 
   // Return the transaction ID
-  return transactionResult.transactionId;
+  return `Successfully borrowed ${amount} USDC. Explorer link: ${getTxExplorerUrl(transactionResult.transactionId)}`;
 };

@@ -1,17 +1,18 @@
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { ChatOpenAI } from '@langchain/openai';
-import { AIMessage } from '@langchain/core/messages';
 import { createToolCallingAgent, AgentExecutor } from 'langchain/agents';
 import { tools } from './tools.js';
-import { swapExactInput } from './mira/swap.js';
-import { transfer } from './transfers/transfers.js';
-import { supplyCollateral } from './swaylend/supply.js';
-import { borrowAsset } from './swaylend/borrow.js';
 
 export const prompt = ChatPromptTemplate.fromMessages([
   [
     'system',
     'You are an AI agent on Fuel network capable of executing all kinds of transactions and interacting with the Fuel blockchain.',
+  ],
+  [
+    'system',
+    `Always return the response in the following format:
+      The transaction was successful/failed. The explorer link is: https://app.fuel.network/tx/0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef/simple
+    `,
   ],
   ['placeholder', '{chat_history}'],
   ['human', '{input}'],
@@ -28,87 +29,6 @@ export const getModel = () => {
 
   return boundModel;
 };
-
-export async function handleModelResponse(response: AIMessage) {
-  // Check if there are tool calls in the response
-  if (response.tool_calls && response.tool_calls.length > 0) {
-    const toolCall = response.tool_calls[0]; // Handle first tool call
-
-    if (!toolCall) {
-      throw new Error('No tool call found in response');
-    }
-
-    // Verify we have the expected tool and args
-    switch (toolCall.name) {
-      case 'fuel_transfer':
-        if (
-          toolCall.args?.to &&
-          toolCall.args?.amount &&
-          toolCall.args?.symbol
-        ) {
-          try {
-            return await transfer({
-              to: toolCall.args.to,
-              amount: toolCall.args.amount,
-              symbol: toolCall.args.symbol,
-            });
-          } catch (error) {
-            console.error('Error executing fuel transfer:', error);
-            throw error;
-          }
-        }
-        break;
-
-      case 'swap_exact_input':
-        if (
-          toolCall.args?.amount &&
-          toolCall.args?.fromSymbol &&
-          toolCall.args?.toSymbol
-        ) {
-          try {
-            return await swapExactInput({
-              amount: toolCall.args.amount,
-              fromSymbol: toolCall.args.fromSymbol,
-              toSymbol: toolCall.args.toSymbol,
-            });
-          } catch (error) {
-            console.error('Error executing swap:', error);
-            throw error;
-          }
-        }
-        break;
-
-      case 'supply_collateral':
-        if (toolCall.args?.amount && toolCall.args?.symbol) {
-          try {
-            return await supplyCollateral({
-              amount: toolCall.args.amount,
-              symbol: toolCall.args.symbol,
-            });
-          } catch (error) {
-            console.error('Error supplying collateral:', error);
-            throw error;
-          }
-        }
-        break;
-
-      case 'borrow_asset':
-        if (toolCall.args?.amount) {
-          try {
-            return await borrowAsset({
-              amount: toolCall.args.amount,
-            });
-          } catch (error) {
-            console.error('Error borrowing asset:', error);
-            throw error;
-          }
-        }
-    }
-    throw new Error('Invalid or unexpected tool call format');
-  } else {
-    throw new Error('No tool calls found in response');
-  }
-}
 
 export const agent = createToolCallingAgent({
   llm: new ChatOpenAI({

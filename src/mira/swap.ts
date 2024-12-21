@@ -2,6 +2,7 @@ import { bn, Provider } from 'fuels';
 import { getAllVerifiedFuelAssets } from '../utils/assets.js';
 import { buildPoolId, MiraAmm } from 'mira-dex-ts';
 import { setupWallet } from '../utils/setup.js';
+import { getTxExplorerUrl } from '../utils/explorer.js';
 
 async function futureDeadline(provider: Provider) {
   const block = await provider.getBlock('latest');
@@ -86,8 +87,5 @@ export const swapExactInput = async ({
 
   const { id, status } = await tx.waitForResult();
 
-  return {
-    status,
-    id,
-  };
+  return `Successfully swapped ${amount} ${fromSymbol} for ${toSymbol}. Explorer link: ${getTxExplorerUrl(id)}`;
 };
