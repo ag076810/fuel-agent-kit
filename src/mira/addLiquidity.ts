@@ -7,17 +7,19 @@ async function futureDeadline(provider: Provider) {
   return block?.height.add(1000) ?? 1000000000;
 }
 
+export type AddLiquidityParams = {
+  amount0: string;
+  asset0Symbol: string;
+  asset1Symbol: string;
+  slippage?: number;
+};
+
 export const addLiquidity = async ({
   amount0,
   asset0Symbol,
   asset1Symbol,
   slippage = 0.01, // Default slippage of 1%
-}: {
-  amount0: number;
-  asset0Symbol: string;
-  asset1Symbol: string;
-  slippage?: number;
-}) => {
+}: AddLiquidityParams) => {
   const assets = await getAllVerifiedFuelAssets();
 
   const asset0 = assets.find((asset) => asset.symbol === asset0Symbol);
@@ -51,7 +53,7 @@ export const addLiquidity = async ({
     provider,
   );
 
-  const amount0InWei = bn.parseUnits(amount0.toString(), asset0Decimals);
+  const amount0InWei = bn.parseUnits(amount0, asset0Decimals);
 
   const poolId = buildPoolId(asset0Id, asset1Id, isStable);
 
@@ -71,10 +73,14 @@ export const addLiquidity = async ({
   }
 
   let amount1InWei;
-  if (result[1][0].bits === asset1Id) {
+  if (result[1] && result[1][0].bits === asset1Id) {
     amount1InWei = result[1][1];
   } else if (result[0][0].bits === asset1Id) {
     amount1InWei = result[0][1];
+  }
+
+  if (!amount1InWei) {
+    throw new Error('Failed to calculate amount1');
   }
 
   console.log('Amount0 (Wei):', amount0InWei.toString());

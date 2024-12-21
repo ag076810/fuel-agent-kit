@@ -49,7 +49,7 @@ export const addLiquidityTool = tool(addLiquidity, {
   name: 'add_liquidity',
   description: 'Add liquidity to a Mira pool',
   schema: z.object({
-    amount0: z.number().describe('The amount of the first asset to add'),
+    amount0: z.string().describe('The amount of the first asset to add'),
     asset0Symbol: z.string().describe('The symbol of the first asset'),
     asset1Symbol: z.string().describe('The symbol of the second asset'),
     slippage: z.number().optional().describe('Slippage tolerance (default: 0.01 for 1%)'),

@@ -10,7 +10,7 @@ test(
   async () => {
     console.log(
       await addLiquidity({
-        amount0: 0.0001,
+        amount0: '0.0001',
         asset0Symbol: 'ETH',
         asset1Symbol: 'USDT',
       }),
