@@ -18,6 +18,20 @@ await agent.transfer({
   amount: 0.1,
   symbol: 'USDC',
 });
+
+// Swap Assets
+await agent.execute('Swap 5 USDC for ETH');
+
+// Add Liqudity
+await agent.execute(
+  'Add liquidity into USDC/USDT pool for 0.1 USDC with 5% slippage',
+);
+
+// Lend Assets
+await agent.execute('Supply 10 USDT as Collateral');
+
+// Borrow Assets
+await agent.execute('Borrow 11 USDC');
 ```
 
 All Langchain tools are also available to be imported and used directly.
