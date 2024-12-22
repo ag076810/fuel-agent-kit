@@ -1,4 +1,6 @@
-## fuel-agent-kit
+# fuel-agent-kit
+
+Docs: https://dhaiwatpandya.gitbook.io/fuel-agent-kit/
 
 ## Getting Started
 
