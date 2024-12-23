@@ -21,14 +21,10 @@ test(
 test(
   'add 0.1 USDC liquidity to USDC/USDT pool',
   {
-      timeout: 60000,
+    timeout: 60000,
   },
   async () => {
     const agent = new FuelAgent();
-    console.log(
-      await agent.execute(
-        'Swap 0.1 USDC to ETH with 5% slippage',
-      ),
-    );
+    console.log(await agent.execute('Swap 0.1 USDC to ETH with 5% slippage'));
   },
 );

@@ -41,7 +41,10 @@ export const addLiquidity = async ({
   const asset0Decimals = asset0.decimals;
   const asset1Decimals = asset1.decimals;
 
-  if (typeof asset0Decimals !== 'number' || typeof asset1Decimals !== 'number') {
+  if (
+    typeof asset0Decimals !== 'number' ||
+    typeof asset1Decimals !== 'number'
+  ) {
     throw new Error('Invalid asset decimals');
   }
 
@@ -59,7 +62,7 @@ export const addLiquidity = async ({
   const result = await miraAmmReader.getAmountsOut(
     { bits: asset0Id },
     amount0InWei,
-    [poolId]
+    [poolId],
   );
 
   if (!result || result.length === 0 || !result[0] || result[0].length < 2) {
@@ -81,9 +84,13 @@ export const addLiquidity = async ({
   console.log('Estimated Amount1 (Wei):', amount1InWei.toString());
 
   // Calculate minimum amounts with slippage
-  const minAmount0 = amount0InWei.mul(bn(100 - Math.floor(slippage * 100))).div(bn(100));
-  const minAmount1 = amount1InWei.mul(bn(100 - Math.floor(slippage * 100))).div(bn(100));
-  
+  const minAmount0 = amount0InWei
+    .mul(bn(100 - Math.floor(slippage * 100)))
+    .div(bn(100));
+  const minAmount1 = amount1InWei
+    .mul(bn(100 - Math.floor(slippage * 100)))
+    .div(bn(100));
+
   console.log('Min Amount0 (Wei):', minAmount0.toString());
   console.log('Min Amount1 (Wei):', minAmount1.toString());
 
