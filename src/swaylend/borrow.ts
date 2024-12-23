@@ -59,10 +59,16 @@ export const borrowAsset = async ({ amount }: BorrowAssetParams) => {
     '0x1c86fdd9e0e7bc0d2ae1bf6817ef4834ffa7247655701ee1b031b52a24c523da',
     wallet,
   );
+  
+  // fetch oracle fee
+  const { value: fee } = await marketContract.functions
+  .update_fee(updateData)
+  .addContracts([pythContract])
+  .get();
 
   // before initiating the borrow make sure the wallet has some small amount of USDC for the oracle fee
   const priceUpdateData: PriceDataUpdateInput = {
-    update_fee: 0,
+    update_fee: fee,
     publish_times: priceUpdates.parsed.map((parsedPrice: any) =>
       DateTime.fromUnixSeconds(parsedPrice.price.publish_time).toTai64(),
     ),
@@ -74,7 +80,7 @@ export const borrowAsset = async ({ amount }: BorrowAssetParams) => {
     .withdraw_base((+amount).toFixed(0), priceUpdateData)
     .callParams({
       forward: {
-        amount: 0,
+        amount: fee,
         assetId: provider.getBaseAssetId(),
       },
     })
