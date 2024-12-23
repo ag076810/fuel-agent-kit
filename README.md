@@ -4,22 +4,31 @@ Docs: https://dhaiwatpandya.gitbook.io/fuel-agent-kit/
 
 ## Getting Started
 
+```bash
+npm install fuel-agent-kit
+```
+
+Make sure you have the following environment variables set:
+
+- `OPENAI_API_KEY`: Your OpenAI API key
+- `FUEL_WALLET_PRIVATE_KEY`: Your Fuel wallet private key
+
 ```ts
 import { FuelAgent } from 'fuel-agent-kit';
 
 const agent = new FuelAgent();
 
-// Execute commands in natural language
-await agent.execute(
-  'Send 0.1 USDC to 0x8F8afB12402C9a4bD9678Bec363E51360142f8443FB171655eEd55dB298828D1',
-);
-
-// Or, call functions directly
+// Call different functions
 await agent.transfer({
   to: '0x8F8afB12402C9a4bD9678Bec363E51360142f8443FB171655eEd55dB298828D1',
   amount: 0.1,
   symbol: 'USDC',
 });
+
+// or, execute commands in natural language
+await agent.execute(
+  'Send 0.1 USDC to 0x8F8afB12402C9a4bD9678Bec363E51360142f8443FB171655eEd55dB298828D1',
+);
 
 // Swap Assets
 await agent.execute('Swap 5 USDC for ETH');
@@ -49,7 +58,7 @@ Make sure you have the following environment variables set:
 - `OPENAI_API_KEY`: Your OpenAI API key
 - `FUEL_WALLET_PRIVATE_KEY`: Your Fuel wallet private key
 
-To run the agent locally, run the following command:
+To run the project locally, run the following command:
 
 Then, install the dependencies:
 
