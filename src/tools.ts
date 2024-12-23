@@ -25,6 +25,10 @@ export const swapExactInputTool = tool(swapExactInput, {
       .string()
       .describe('The asset symbol to swap from. eg. USDC, ETH'),
     toSymbol: z.string().describe('The asset symbol to swap to. eg. USDC, ETH'),
+    slippage: z
+      .number()
+      .optional()
+      .describe('Slippage tolerance (default: 0.01 for 1%)'),
   }),
 });
 
@@ -52,7 +56,10 @@ export const addLiquidityTool = tool(addLiquidity, {
     amount0: z.string().describe('The amount of the first asset to add'),
     asset0Symbol: z.string().describe('The symbol of the first asset'),
     asset1Symbol: z.string().describe('The symbol of the second asset'),
-    slippage: z.number().optional().describe('Slippage tolerance (default: 0.01 for 1%)'),
+    slippage: z
+      .number()
+      .optional()
+      .describe('Slippage tolerance (default: 0.01 for 1%)'),
   }),
 });
 
@@ -61,5 +68,5 @@ export const tools = [
   swapExactInputTool,
   supplyCollateralTool,
   borrowAssetTool,
-  addLiquidityTool
+  addLiquidityTool,
 ];

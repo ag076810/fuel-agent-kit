@@ -25,17 +25,17 @@ export const supplyCollateral = async ({
 
   const weiAmount = bn.parseUnits(amount, asset?.decimals);
 
-    const tx = await marketContract.functions
-      .supply_collateral()
-      .callParams({
-        forward: {
-          assetId: assetId,
-          amount: weiAmount,
-        } as any,
-      })
-      .call();
+  const tx = await marketContract.functions
+    .supply_collateral()
+    .callParams({
+      forward: {
+        assetId: assetId,
+        amount: weiAmount,
+      } as any,
+    })
+    .call();
 
-    const { transactionId } = await tx.waitForResult();
+  const { transactionId } = await tx.waitForResult();
 
-    return `Successfully supplied ${amount} ${symbol} as collateral. Explorer link: ${getTxExplorerUrl(transactionId)}`;
+  return `Successfully supplied ${amount} ${symbol} as collateral. Explorer link: ${getTxExplorerUrl(transactionId)}`;
 };
