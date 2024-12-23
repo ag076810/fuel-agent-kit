@@ -25,6 +25,7 @@ export const swapExactInputTool = tool(swapExactInput, {
       .string()
       .describe('The asset symbol to swap from. eg. USDC, ETH'),
     toSymbol: z.string().describe('The asset symbol to swap to. eg. USDC, ETH'),
+    slippage: z.number().optional().describe('Slippage tolerance (default: 0.01 for 1%)'),
   }),
 });
 
