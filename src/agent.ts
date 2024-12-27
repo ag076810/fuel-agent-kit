@@ -25,8 +25,6 @@ export const createAgent = (openAIKey: string) => {
     apiKey: openAIKey,
   });
 
-  // const boundModel = model.bindTools(tools);
-
   const agent = createToolCallingAgent({
     llm: model,
     tools,
