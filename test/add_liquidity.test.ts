@@ -1,6 +1,11 @@
-import { test } from 'vitest';
-import { addLiquidity } from '../src/mira/addLiquidity.js';
-import { FuelAgent } from '../src/FuelAgent.js';
+import { test, beforeEach } from 'vitest';
+import { createTestAgent, type FuelAgentType } from './setup.js';
+
+let agent: FuelAgentType;
+
+beforeEach(() => {
+  agent = createTestAgent();
+});
 
 test(
   'add liquidity',
@@ -9,7 +14,7 @@ test(
   },
   async () => {
     console.log(
-      await addLiquidity({
+      await agent.addLiquidity({
         amount0: '0.0001',
         asset0Symbol: 'ETH',
         asset1Symbol: 'USDT',
@@ -19,12 +24,11 @@ test(
 );
 
 test(
-  'add 0.1 USDC liquidity to USDC/USDT pool',
+  'add liquidity via natural language',
   {
     timeout: 60000,
   },
   async () => {
-    const agent = new FuelAgent();
     console.log(
       await agent.execute(
         'Add liquidity into USDC/USDT pool for 0.1 USDC with 5% slippage',

@@ -1,6 +1,11 @@
-import { test } from 'vitest';
-import { swapExactInput } from '../src/mira/swap.js';
-import { FuelAgent } from '../src/FuelAgent.js';
+import { test, beforeEach } from 'vitest';
+import { createTestAgent, type FuelAgentType } from './setup.js';
+
+let agent: FuelAgentType;
+
+beforeEach(() => {
+  agent = createTestAgent();
+});
 
 test(
   'swap exact input',
@@ -9,7 +14,7 @@ test(
   },
   async () => {
     console.log(
-      await swapExactInput({
+      await agent.swapExactInput({
         amount: '1',
         fromSymbol: 'USDC',
         toSymbol: 'ETH',
@@ -19,12 +24,11 @@ test(
 );
 
 test(
-  'add 0.1 USDC liquidity to USDC/USDT pool',
+  'swap via natural language',
   {
     timeout: 60000,
   },
   async () => {
-    const agent = new FuelAgent();
     console.log(await agent.execute('Swap 0.1 USDC to ETH with 5% slippage'));
   },
 );
