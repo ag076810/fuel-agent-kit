@@ -79,10 +79,7 @@ export const addLiquidity = async (
   if (!amount1InWei) {
     throw new Error('Failed to calculate amount1');
   }
-
-  console.log('Amount0 (Wei):', amount0InWei.toString());
-  console.log('Estimated Amount1 (Wei):', amount1InWei.toString());
-
+  
   // Calculate minimum amounts with slippage
   const minAmount0 = amount0InWei
     .mul(bn(100 - Math.floor((params.slippage || DEFAULT_SLIPPAGE) * 100)))
@@ -90,9 +87,6 @@ export const addLiquidity = async (
   const minAmount1 = amount1InWei
     .mul(bn(100 - Math.floor((params.slippage || DEFAULT_SLIPPAGE) * 100)))
     .div(bn(100));
-
-  console.log('Min Amount0 (Wei):', minAmount0.toString());
-  console.log('Min Amount1 (Wei):', minAmount1.toString());
 
   const req = await miraAmm.addLiquidity(
     poolId,
