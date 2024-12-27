@@ -1,4 +1,4 @@
-# fuel-agent-kit
+# fuel-agent-kit (alpha)
 
 Docs: https://dhaiwatpandya.gitbook.io/fuel-agent-kit/
 
