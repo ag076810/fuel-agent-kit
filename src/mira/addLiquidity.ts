@@ -2,6 +2,7 @@ import { bn, Provider } from 'fuels';
 import { getAllVerifiedFuelAssets } from '../utils/assets.js';
 import { buildPoolId, MiraAmm, ReadonlyMiraAmm } from 'mira-dex-ts';
 import { setupWallet } from '../utils/setup.js';
+import { DEFAULT_SLIPPAGE } from '../constants.js';
 
 async function futureDeadline(provider: Provider) {
   const block = await provider.getBlock('latest');
@@ -15,19 +16,20 @@ export type AddLiquidityParams = {
   slippage?: number;
 };
 
-export const addLiquidity = async ({
-  amount0,
-  asset0Symbol,
-  asset1Symbol,
-  slippage = 0.01, // Default slippage of 1%
-}: AddLiquidityParams) => {
+export const addLiquidity = async (
+  params: AddLiquidityParams,
+  privateKey: string,
+) => {
+  const { wallet, provider } = await setupWallet(privateKey);
   const assets = await getAllVerifiedFuelAssets();
 
-  const asset0 = assets.find((asset) => asset.symbol === asset0Symbol);
-  const asset1 = assets.find((asset) => asset.symbol === asset1Symbol);
+  const asset0 = assets.find((asset) => asset.symbol === params.asset0Symbol);
+  const asset1 = assets.find((asset) => asset.symbol === params.asset1Symbol);
 
   if (!asset0 || !asset1) {
-    throw new Error(`Asset ${asset0Symbol} or ${asset1Symbol} not found`);
+    throw new Error(
+      `Asset ${params.asset0Symbol} or ${params.asset1Symbol} not found`,
+    );
   }
 
   let isStable = asset0.symbol.includes('USD') && asset1.symbol.includes('USD');
@@ -48,9 +50,7 @@ export const addLiquidity = async ({
     throw new Error('Invalid asset decimals');
   }
 
-  const { provider, wallet } = await setupWallet();
-
-  const amount0InWei = bn.parseUnits(amount0, asset0Decimals);
+  const amount0InWei = bn.parseUnits(params.amount0, asset0Decimals);
 
   const poolId = buildPoolId(asset0Id, asset1Id, isStable);
 
@@ -85,10 +85,10 @@ export const addLiquidity = async ({
 
   // Calculate minimum amounts with slippage
   const minAmount0 = amount0InWei
-    .mul(bn(100 - Math.floor(slippage * 100)))
+    .mul(bn(100 - Math.floor((params.slippage || DEFAULT_SLIPPAGE) * 100)))
     .div(bn(100));
   const minAmount1 = amount1InWei
-    .mul(bn(100 - Math.floor(slippage * 100)))
+    .mul(bn(100 - Math.floor((params.slippage || DEFAULT_SLIPPAGE) * 100)))
     .div(bn(100));
 
   console.log('Min Amount0 (Wei):', minAmount0.toString());

@@ -1,13 +1,11 @@
 import { Provider, Wallet } from 'fuels';
 
-export const setupWallet = async () => {
+export const setupWallet = async (privateKey: string) => {
   const provider = await Provider.create(
     'https://mainnet.fuel.network/v1/graphql',
   );
-  const wallet = Wallet.fromPrivateKey(
-    process.env.FUEL_WALLET_PRIVATE_KEY as string,
-    provider,
-  );
+
+  const wallet = Wallet.fromPrivateKey(privateKey, provider);
 
   return {
     wallet,

@@ -10,8 +10,11 @@ export type BorrowAssetParams = {
   amount: string;
 };
 
-export const borrowAsset = async ({ amount }: BorrowAssetParams) => {
-  const { wallet, provider } = await setupWallet();
+export const borrowAsset = async (
+  params: BorrowAssetParams,
+  privateKey: string,
+) => {
+  const { wallet, provider } = await setupWallet(privateKey);
 
   const marketContractId =
     '0x657ab45a6eb98a4893a99fd104347179151e8b3828fd8f2a108cc09770d1ebae';
@@ -21,7 +24,7 @@ export const borrowAsset = async ({ amount }: BorrowAssetParams) => {
   const asset = allAssets.find((asset) => asset.symbol === 'USDC'); // We can only borrow USDC
   const assetId: any = asset?.assetId;
 
-  const weiAmount = bn.parseUnits(amount, asset?.decimals);
+  const weiAmount = bn.parseUnits(params.amount, asset?.decimals);
 
   // fetch configs
   const { value: marketConfiguration } = await marketContract.functions
@@ -77,7 +80,7 @@ export const borrowAsset = async ({ amount }: BorrowAssetParams) => {
   };
 
   const { waitForResult } = await marketContract.functions
-    .withdraw_base((+amount).toFixed(0), priceUpdateData)
+    .withdraw_base((+params.amount).toFixed(0), priceUpdateData)
     .callParams({
       forward: {
         amount: fee,
@@ -91,5 +94,5 @@ export const borrowAsset = async ({ amount }: BorrowAssetParams) => {
   const transactionResult = await waitForResult();
 
   // Return the transaction ID
-  return `Successfully borrowed ${amount} USDC. Explorer link: ${getTxExplorerUrl(transactionResult.transactionId)}`;
+  return `Successfully borrowed ${params.amount} USDC. Explorer link: ${getTxExplorerUrl(transactionResult.transactionId)}`;
 };

@@ -9,24 +9,20 @@ export type TransferParams = {
   symbol: string;
 };
 
-export const transfer = async ({
-  to,
-  amount, // eg. 0.2
-  symbol,
-}: TransferParams) => {
-  const { wallet } = await setupWallet();
+export const transfer = async (params: TransferParams, privateKey: string) => {
+  const { wallet } = await setupWallet(privateKey);
 
   const allAssets = await getAllVerifiedFuelAssets();
-  const asset = allAssets.find((asset) => asset.symbol === symbol);
+  const asset = allAssets.find((asset) => asset.symbol === params.symbol);
   const assetId = asset?.assetId;
 
   if (!assetId) {
-    throw new Error(`Asset ${symbol} not found`);
+    throw new Error(`Asset ${params.symbol} not found`);
   }
 
   const response = await wallet.transfer(
-    to,
-    bn.parseUnits(amount, asset.decimals),
+    params.to,
+    bn.parseUnits(params.amount, asset.decimals),
     assetId,
   );
   const { id, isStatusFailure } = await response.waitForResult();
@@ -35,5 +31,5 @@ export const transfer = async ({
     console.error('TX failed');
   }
 
-  return `Sucessfully transferred ${amount}${symbol} to ${to}. Explorer link: ${getTxExplorerUrl(id)}`;
+  return `Sucessfully transferred ${params.amount} ${params.symbol} to ${params.to}. Explorer link: ${getTxExplorerUrl(id)}`;
 };
