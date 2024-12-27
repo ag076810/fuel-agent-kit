@@ -90,10 +90,7 @@ export const swapExactInput = async (
   if (!amountOutWei) {
     throw new Error('Failed to calculate output amount');
   }
-
-  console.log('Amount In (Wei):', amountInWei.toString());
-  console.log('Estimated Amount Out (Wei):', amountOutWei.toString());
-
+  
   const minAmountOut = amountOutWei
     .mul(bn(100 - Math.floor((params.slippage || DEFAULT_SLIPPAGE) * 100)))
     .div(bn(100));

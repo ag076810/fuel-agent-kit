@@ -11,6 +11,7 @@ import {
 } from './transfers/transfers.js';
 import { createAgent } from './agent.js';
 import { AgentExecutor } from 'langchain/agents';
+import { getOwnBalance, type GetOwnBalanceParams } from './read/balance.js';
 
 interface FuelAgentConfig {
   walletPrivateKey: string;
@@ -34,7 +35,7 @@ export class FuelAgent {
       throw new Error('Fuel wallet private key is required.');
     }
 
-    this.agentExecutor = createAgent(this.openAIKey);
+    this.agentExecutor = createAgent(this.openAIKey, this);
   }
 
   getCredentials() {
@@ -70,5 +71,9 @@ export class FuelAgent {
 
   async addLiquidity(params: AddLiquidityParams) {
     return await addLiquidity(params, this.walletPrivateKey);
+  }
+
+  async getOwnBalance(params: GetOwnBalanceParams) {
+    return await getOwnBalance(params, this.walletPrivateKey);
   }
 }
