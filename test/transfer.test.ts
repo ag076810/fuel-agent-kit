@@ -7,16 +7,10 @@ beforeEach(() => {
   agent = createTestAgent();
 });
 
-test(
-  'transfer USDC to another wallet',
-  async () => {
-    console.log(
-      await agent.execute(
-        'Transfer 2 USDC to 0x8F8afB12402C9a4bD9678Bec363E51360142f8443FB171655eEd55dB298828D1',
-      ),
-    );
-  },
-  {
-    timeout: 60000,
-  },
-);
+test('transfer USDC to another wallet', async () => {
+  console.log(
+    await agent.execute(
+      'Transfer 2 USDC to 0x8F8afB12402C9a4bD9678Bec363E51360142f8443FB171655eEd55dB298828D1',
+    ),
+  );
+});

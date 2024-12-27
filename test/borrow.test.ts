@@ -8,12 +8,6 @@ beforeEach(() => {
   agent = createTestAgent();
 });
 
-test(
-  'borrowAsset',
-  async () => {
-    console.log(await agent.execute('Borrow 11 USDC'));
-  },
-  {
-    timeout: 500000,
-  },
-);
+test('borrowAsset', async () => {
+  console.log(await agent.execute('Borrow 11 USDC'));
+});

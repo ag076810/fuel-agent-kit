@@ -9,9 +9,6 @@ beforeEach(() => {
 
 test(
   'add liquidity',
-  {
-    timeout: 30000,
-  },
   async () => {
     console.log(
       await agent.addLiquidity({
@@ -25,9 +22,6 @@ test(
 
 test(
   'add liquidity via natural language',
-  {
-    timeout: 60000,
-  },
   async () => {
     console.log(
       await agent.execute(

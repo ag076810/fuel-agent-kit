@@ -7,12 +7,6 @@ beforeEach(() => {
   agent = createTestAgent();
 });
 
-test(
-  'supplyCollateral',
-  async () => {
-    console.log(await agent.execute('Supply 2 USDT as collateral'));
-  },
-  {
-    timeout: 500000,
-  },
-);
+test('supplyCollateral', async () => {
+  console.log(await agent.execute('Supply 2 USDT as collateral'));
+});

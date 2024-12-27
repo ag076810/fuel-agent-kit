@@ -7,12 +7,6 @@ beforeEach(() => {
   agent = createTestAgent();
 });
 
-test(
-  'execute swap',
-  async () => {
-    console.log(await agent.execute('swap 5 usdc for eth'));
-  },
-  {
-    timeout: 60000,
-  },
-);
+test('execute swap', async () => {
+  console.log(await agent.execute('swap 5 usdc for eth'));
+});
