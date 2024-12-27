@@ -6,7 +6,18 @@ import { supplyCollateral } from './swaylend/supply.js';
 import { borrowAsset } from './swaylend/borrow.js';
 import { addLiquidity } from './mira/addLiquidity.js';
 
-export const transferTool = tool(transfer, {
+/**
+ * Wrapper functions that only take the params argument
+ * @param fn - The function to wrap.
+ * @returns A new function that takes only the params argument.
+ */
+const wrapWithoutPrivateKey = <T>(
+  fn: (params: T, privateKey: string) => Promise<any>,
+) => {
+  return (params: T) => fn(params, '');
+};
+
+export const transferTool = tool(wrapWithoutPrivateKey(transfer), {
   name: 'fuel_transfer',
   description: 'Transfer any verified Fuel asset to another wallet',
   schema: z.object({
@@ -16,7 +27,7 @@ export const transferTool = tool(transfer, {
   }),
 });
 
-export const swapExactInputTool = tool(swapExactInput, {
+export const swapExactInputTool = tool(wrapWithoutPrivateKey(swapExactInput), {
   name: 'swap_exact_input',
   description: 'Swap exact input on Mira',
   schema: z.object({
@@ -32,16 +43,19 @@ export const swapExactInputTool = tool(swapExactInput, {
   }),
 });
 
-export const supplyCollateralTool = tool(supplyCollateral, {
-  name: 'supply_collateral',
-  description: 'Supply collateral on swaylend',
-  schema: z.object({
-    amount: z.string().describe('The amount to lend'),
-    symbol: z.string().describe('The asset symbol to lend. eg. USDC, ETH'),
-  }),
-});
+export const supplyCollateralTool = tool(
+  wrapWithoutPrivateKey(supplyCollateral),
+  {
+    name: 'supply_collateral',
+    description: 'Supply collateral on swaylend',
+    schema: z.object({
+      amount: z.string().describe('The amount to lend'),
+      symbol: z.string().describe('The asset symbol to lend. eg. USDC, ETH'),
+    }),
+  },
+);
 
-export const borrowAssetTool = tool(borrowAsset, {
+export const borrowAssetTool = tool(wrapWithoutPrivateKey(borrowAsset), {
   name: 'borrow_asset',
   description: 'Borrow asset on swaylend',
   schema: z.object({
@@ -49,7 +63,7 @@ export const borrowAssetTool = tool(borrowAsset, {
   }),
 });
 
-export const addLiquidityTool = tool(addLiquidity, {
+export const addLiquidityTool = tool(wrapWithoutPrivateKey(addLiquidity), {
   name: 'add_liquidity',
   description: 'Add liquidity to a Mira pool',
   schema: z.object({

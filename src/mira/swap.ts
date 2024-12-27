@@ -3,6 +3,7 @@ import { getAllVerifiedFuelAssets } from '../utils/assets.js';
 import { buildPoolId, MiraAmm, ReadonlyMiraAmm } from 'mira-dex-ts';
 import { setupWallet } from '../utils/setup.js';
 import { getTxExplorerUrl } from '../utils/explorer.js';
+import { DEFAULT_SLIPPAGE } from '../constants.js';
 
 async function futureDeadline(provider: Provider) {
   const block = await provider.getBlock('latest');
@@ -16,55 +17,47 @@ export type SwapExactInputParams = {
   slippage?: number;
 };
 
-export const swapExactInput = async ({
-  amount,
-  fromSymbol,
-  toSymbol,
-  slippage = 0.01,
-}: {
-  amount: string;
-  fromSymbol: string;
-  toSymbol: string;
-  slippage?: number;
-}) => {
+export const swapExactInput = async (
+  params: SwapExactInputParams,
+  privateKey: string,
+) => {
+  const { wallet, provider } = await setupWallet(privateKey);
   const assets = await getAllVerifiedFuelAssets();
 
-  const fromAsset = assets.find((asset) => asset.symbol === fromSymbol);
-  const toAsset = assets.find((asset) => asset.symbol === toSymbol);
+  const fromAsset = assets.find((asset) => asset.symbol === params.fromSymbol);
+  const toAsset = assets.find((asset) => asset.symbol === params.toSymbol);
 
   if (!fromAsset) {
-    throw new Error(`Asset ${fromSymbol} not found`);
+    throw new Error(`Asset ${params.fromSymbol} not found`);
   }
 
   if (!toAsset) {
-    throw new Error(`Asset ${toSymbol} not found`);
+    throw new Error(`Asset ${params.toSymbol} not found`);
   }
 
   const fromAssetId = fromAsset?.assetId;
   const toAssetId = toAsset?.assetId;
 
   if (!fromAssetId) {
-    throw new Error(`Asset ${fromSymbol} not found`);
+    throw new Error(`Asset ${params.fromSymbol} not found`);
   }
 
   if (!toAssetId) {
-    throw new Error(`Asset ${toSymbol} not found`);
+    throw new Error(`Asset ${params.toSymbol} not found`);
   }
 
   const fromAssetDecimals = fromAsset?.decimals;
   const toAssetDecimals = toAsset?.decimals;
 
   if (!fromAssetDecimals) {
-    throw new Error(`Asset ${fromSymbol} not found`);
+    throw new Error(`Asset ${params.fromSymbol} not found`);
   }
 
   if (!toAssetDecimals) {
-    throw new Error(`Asset ${toSymbol} not found`);
+    throw new Error(`Asset ${params.toSymbol} not found`);
   }
 
-  const { wallet, provider } = await setupWallet();
-
-  const amountInWei = bn.parseUnits(amount, fromAssetDecimals);
+  const amountInWei = bn.parseUnits(params.amount, fromAssetDecimals);
 
   let isStable =
     fromAsset.symbol.includes('USD') && toAsset.symbol.includes('USD');
@@ -102,7 +95,7 @@ export const swapExactInput = async ({
   console.log('Estimated Amount Out (Wei):', amountOutWei.toString());
 
   const minAmountOut = amountOutWei
-    .mul(bn(100 - Math.floor(slippage * 100)))
+    .mul(bn(100 - Math.floor((params.slippage || DEFAULT_SLIPPAGE) * 100)))
     .div(bn(100));
 
   const req = await miraAmm.swapExactInput(
@@ -123,5 +116,5 @@ export const swapExactInput = async ({
 
   const { id, status } = await tx.waitForResult();
 
-  return `Successfully swapped ${amount} ${fromSymbol} for ${toSymbol}. Explorer link: ${getTxExplorerUrl(id)}`;
+  return `Successfully swapped ${params.amount} ${params.fromSymbol} for ${params.toSymbol}. Explorer link: ${getTxExplorerUrl(id)}`;
 };

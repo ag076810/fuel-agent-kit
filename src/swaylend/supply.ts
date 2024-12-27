@@ -9,21 +9,21 @@ export type SupplyCollateralParams = {
   symbol: string;
 };
 
-export const supplyCollateral = async ({
-  amount,
-  symbol,
-}: SupplyCollateralParams) => {
-  const { wallet } = await setupWallet();
+export const supplyCollateral = async (
+  params: SupplyCollateralParams,
+  privateKey: string,
+) => {
+  const { wallet } = await setupWallet(privateKey);
 
   const marketContractId =
     '0x657ab45a6eb98a4893a99fd104347179151e8b3828fd8f2a108cc09770d1ebae';
   const marketContract: Market = new Market(marketContractId, wallet);
 
   const allAssets = await getAllVerifiedFuelAssets();
-  const asset = allAssets.find((asset) => asset.symbol === symbol);
+  const asset = allAssets.find((asset) => asset.symbol === params.symbol);
   const assetId = asset?.assetId;
 
-  const weiAmount = bn.parseUnits(amount, asset?.decimals);
+  const weiAmount = bn.parseUnits(params.amount, asset?.decimals);
 
   const tx = await marketContract.functions
     .supply_collateral()
@@ -37,5 +37,5 @@ export const supplyCollateral = async ({
 
   const { transactionId } = await tx.waitForResult();
 
-  return `Successfully supplied ${amount} ${symbol} as collateral. Explorer link: ${getTxExplorerUrl(transactionId)}`;
+  return `Successfully supplied ${params.amount} ${params.symbol} as collateral. Explorer link: ${getTxExplorerUrl(transactionId)}`;
 };

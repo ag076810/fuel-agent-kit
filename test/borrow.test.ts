@@ -1,10 +1,16 @@
-import { test } from 'vitest';
-import { FuelAgent } from '../dist/index.js';
+import { test, beforeEach } from 'vitest';
+import { FuelAgent } from '../src/FuelAgent.js';
+import { createTestAgent } from './setup.js';
+
+let agent: FuelAgent;
+
+beforeEach(() => {
+  agent = createTestAgent();
+});
 
 test(
   'borrowAsset',
   async () => {
-    const agent = new FuelAgent();
     console.log(await agent.execute('Borrow 11 USDC'));
   },
   {

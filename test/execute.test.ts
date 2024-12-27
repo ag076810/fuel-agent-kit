@@ -1,10 +1,15 @@
-import { test } from 'vitest';
-import { FuelAgent } from '../dist/index.js';
+import { test, beforeEach } from 'vitest';
+import { createTestAgent, type FuelAgentType } from './setup.js';
+
+let agent: FuelAgentType;
+
+beforeEach(() => {
+  agent = createTestAgent();
+});
 
 test(
   'execute swap',
   async () => {
-    const agent = new FuelAgent();
     console.log(await agent.execute('swap 5 usdc for eth'));
   },
   {

@@ -8,15 +8,18 @@ Docs: https://dhaiwatpandya.gitbook.io/fuel-agent-kit/
 npm install fuel-agent-kit
 ```
 
-Make sure you have the following environment variables set:
+You will need two things:
 
-- `OPENAI_API_KEY`: Your OpenAI API key
-- `FUEL_WALLET_PRIVATE_KEY`: Your Fuel wallet private key
+- An OpenAI API key
+- A Fuel wallet private key
 
 ```ts
 import { FuelAgent } from 'fuel-agent-kit';
 
-const agent = new FuelAgent();
+const agent = new FuelAgent({
+  openaiApiKey: process.env.OPENAI_API_KEY,
+  walletPrivateKey: process.env.FUEL_WALLET_PRIVATE_KEY,
+});
 
 // Call different functions
 await agent.transfer({
