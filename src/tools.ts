@@ -7,7 +7,7 @@ import { transfer } from './transfers/transfers.js';
 import { supplyCollateral } from './swaylend/supply.js';
 import { borrowAsset } from './swaylend/borrow.js';
 import { addLiquidity } from './mira/addLiquidity.js';
-import { getOwnBalance } from './read/balance.js';
+import { getBalance, getOwnBalance } from './read/balance.js';
 
 // Types
 type FuelAgentInterface = {
@@ -70,6 +70,15 @@ const getOwnBalanceSchema = z.object({
     .describe('The asset symbol to get the balance of. eg. USDC, ETH'),
 });
 
+const getBalanceSchema = z.object({
+  walletAddress: z
+    .string()
+    .describe('The wallet address to get the balance of'),
+  assetSymbol: z
+    .string()
+    .describe('The asset symbol to get the balance of. eg. USDC, ETH'),
+});
+
 /**
  * Creates and returns all tools with injected agent credentials
  */
@@ -108,5 +117,11 @@ export const createTools = (agent: FuelAgentInterface) => [
     name: 'get_own_balance',
     description: 'Get the balance of an asset in your wallet',
     schema: getOwnBalanceSchema,
+  }),
+
+  tool(getBalance, {
+    name: 'get_balance',
+    description: 'Get the balance of an asset for a given wallet address',
+    schema: getBalanceSchema,
   }),
 ];
