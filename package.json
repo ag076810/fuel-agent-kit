@@ -42,10 +42,12 @@
     "@langchain/openai": "^0.3.14",
     "@pythnetwork/hermes-client": "^1.2.0",
     "@pythnetwork/pyth-fuel-js": "^1.0.7",
-    "fuels": "^0.96.1",
     "langchain": "^0.3.7",
     "mira-dex-ts": "^1.0.42",
     "zod": "^3.24.1"
+  },
+  "peerDependencies": {
+    "fuels": "^0.96.1"
   },
   "scripts": {
     "build": "tsup",
