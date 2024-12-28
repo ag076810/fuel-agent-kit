@@ -79,7 +79,7 @@ export const addLiquidity = async (
   if (!amount1InWei) {
     throw new Error('Failed to calculate amount1');
   }
-  
+
   // Calculate minimum amounts with slippage
   const minAmount0 = amount0InWei
     .mul(bn(100 - Math.floor((params.slippage || DEFAULT_SLIPPAGE) * 100)))
