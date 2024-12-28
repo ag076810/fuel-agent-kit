@@ -1,5 +1,5 @@
 import { getAllVerifiedFuelAssets } from '../utils/assets.js';
-import { setupWallet, getProvider } from '../utils/setup.js';
+import { setupWallet, ProviderInstance } from '../utils/setup.js';
 
 export type GetOwnBalanceParams = {
   symbol: string;
@@ -31,7 +31,7 @@ export type GetBalanceParams = {
 };
 
 export const getBalance = async (params: GetBalanceParams) => {
-  const provider = await getProvider();
+  const provider = await ProviderInstance.getProvider();
 
   const allAssets = await getAllVerifiedFuelAssets();
   const asset = allAssets.find((asset) => asset.symbol === params.assetSymbol);
