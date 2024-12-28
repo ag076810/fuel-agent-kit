@@ -14,25 +14,25 @@ import type { AgentExecutor } from 'langchain/agents';
 import { getOwnBalance, type GetOwnBalanceParams } from './read/balance.js';
 import type { modelMapping } from './utils/models.js';
 
-interface FuelAgentConfig {
+export interface FuelAgentConfig {
   walletPrivateKey: string;
-  modelName: keyof typeof modelMapping;
+  model: keyof typeof modelMapping;
   openAiApiKey?: string;
   anthropicApiKey?: string;
   googleGeminiApiKey?: string;
 }
 
-export class FuelAgent {
+export class FuelAgent {  
   private walletPrivateKey: string;
   private agentExecutor: AgentExecutor;
-  private modelName: keyof typeof modelMapping;
+  private model: keyof typeof modelMapping;
   private openAiApiKey?: string;
   private anthropicApiKey?: string;
   private googleGeminiApiKey?: string;
 
   constructor(config: FuelAgentConfig) {
     this.walletPrivateKey = config.walletPrivateKey;
-    this.modelName = config.modelName;
+    this.model = config.model;
     this.openAiApiKey = config.openAiApiKey;
     this.anthropicApiKey = config.anthropicApiKey;
     this.googleGeminiApiKey = config.googleGeminiApiKey;
@@ -43,7 +43,7 @@ export class FuelAgent {
 
     this.agentExecutor = createAgent(
       this,
-      this.modelName,
+      this.model,
       this.openAiApiKey,
       this.anthropicApiKey,
       this.googleGeminiApiKey,

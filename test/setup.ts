@@ -1,11 +1,10 @@
-import { FuelAgent } from '../src/FuelAgent.js';
-import type { modelMapping } from '../src/utils/models.js';
+import { FuelAgent, type FuelAgentConfig } from '../src/FuelAgent.js';
 
 export type FuelAgentType = FuelAgent;
 
-export const TEST_CREDENTIALS = {
+export const TEST_CREDENTIALS: FuelAgentConfig = {
   walletPrivateKey: process.env.FUEL_WALLET_PRIVATE_KEY!,
-  modelName: 'gemini-1.5-flash' as keyof typeof modelMapping,
+  model: 'gpt-4o-mini',
   openAiApiKey: process.env.OPENAI_API_KEY!,
   anthropicApiKey: process.env.ANTHROPIC_API_KEY!,
   googleGeminiApiKey: process.env.GOOGLE_GEMINI_API_KEY!,
