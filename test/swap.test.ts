@@ -10,8 +10,8 @@ beforeEach(() => {
 test('swap exact input', async () => {
   console.log(
     await agent.swapExactInput({
-      amount: '1',
-      fromSymbol: 'USDC',
+      amount: '0.0001',
+      fromSymbol: 'ETH',
       toSymbol: 'ETH',
     }),
   );

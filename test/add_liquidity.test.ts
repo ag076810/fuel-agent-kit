@@ -7,26 +7,20 @@ beforeEach(() => {
   agent = createTestAgent();
 });
 
-test(
-  'add liquidity',
-  async () => {
-    console.log(
-      await agent.addLiquidity({
-        amount0: '0.0001',
-        asset0Symbol: 'ETH',
-        asset1Symbol: 'USDT',
-      }),
-    );
-  },
-);
+test('add liquidity', async () => {
+  console.log(
+    await agent.addLiquidity({
+      amount0: '0.0001',
+      asset0Symbol: 'ETH',
+      asset1Symbol: 'USDT',
+    }),
+  );
+});
 
-test(
-  'add liquidity via natural language',
-  async () => {
-    console.log(
-      await agent.execute(
-        'Add liquidity into USDC/USDT pool for 0.1 USDC with 5% slippage',
-      ),
-    );
-  },
-);
+test('add liquidity via natural language', async () => {
+  console.log(
+    await agent.execute(
+      'Add liquidity into USDC/USDT pool for 0.1 USDC with 5% slippage',
+    ),
+  );
+});

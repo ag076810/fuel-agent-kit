@@ -10,38 +10,52 @@ import {
   type TransferParams,
 } from './transfers/transfers.js';
 import { createAgent } from './agent.js';
-import { AgentExecutor } from 'langchain/agents';
+import type { AgentExecutor } from 'langchain/agents';
 import { getOwnBalance, type GetOwnBalanceParams } from './read/balance.js';
+import type { modelMapping } from './utils/models.js';
 
-interface FuelAgentConfig {
+export interface FuelAgentConfig {
   walletPrivateKey: string;
-  openAIKey: string;
+  model: keyof typeof modelMapping;
+  openAiApiKey?: string;
+  anthropicApiKey?: string;
+  googleGeminiApiKey?: string;
 }
 
-export class FuelAgent {
+export class FuelAgent {  
   private walletPrivateKey: string;
-  private openAIKey: string;
   private agentExecutor: AgentExecutor;
+  private model: keyof typeof modelMapping;
+  private openAiApiKey?: string;
+  private anthropicApiKey?: string;
+  private googleGeminiApiKey?: string;
 
   constructor(config: FuelAgentConfig) {
     this.walletPrivateKey = config.walletPrivateKey;
-    this.openAIKey = config.openAIKey;
-
-    if (!this.openAIKey) {
-      throw new Error('OpenAI API key is required.');
-    }
+    this.model = config.model;
+    this.openAiApiKey = config.openAiApiKey;
+    this.anthropicApiKey = config.anthropicApiKey;
+    this.googleGeminiApiKey = config.googleGeminiApiKey;
 
     if (!this.walletPrivateKey) {
       throw new Error('Fuel wallet private key is required.');
     }
 
-    this.agentExecutor = createAgent(this.openAIKey, this);
+    this.agentExecutor = createAgent(
+      this,
+      this.model,
+      this.openAiApiKey,
+      this.anthropicApiKey,
+      this.googleGeminiApiKey,
+    );
   }
 
   getCredentials() {
     return {
       walletPrivateKey: this.walletPrivateKey,
-      openAIKey: this.openAIKey,
+      openAiApiKey: this.openAiApiKey || '',
+      anthropicApiKey: this.anthropicApiKey || '',
+      googleGeminiApiKey: this.googleGeminiApiKey || '',
     };
   }
 
