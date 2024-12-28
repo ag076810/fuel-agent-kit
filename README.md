@@ -10,13 +10,14 @@ npm install fuel-agent-kit
 
 You will need two things:
 
-- An OpenAI API key
 - A Fuel wallet private key
+- An OpenAI or Gemini or Anthropic API key
 
 ```ts
 import { FuelAgent } from 'fuel-agent-kit';
 
 const agent = new FuelAgent({
+  model: 'gpt-4o-mini',
   openaiApiKey: process.env.OPENAI_API_KEY,
   walletPrivateKey: process.env.FUEL_WALLET_PRIVATE_KEY,
 });
@@ -58,7 +59,7 @@ import { transferTool } from 'fuel-agent-kit';
 
 Make sure you have the following environment variables set:
 
-- `OPENAI_API_KEY`: Your OpenAI API key
+- `OPENAI_API_KEY`: Your OpenAI API key (or `GOOGLE_GEMINI_API_KEY` or `ANTHROPIC_API_KEY`)
 - `FUEL_WALLET_PRIVATE_KEY`: Your Fuel wallet private key
 
 To run the project locally, run the following command:
