@@ -1,6 +1,5 @@
-import { Provider } from 'fuels';
 import { getAllVerifiedFuelAssets } from '../utils/assets.js';
-import { setupWallet } from '../utils/setup.js';
+import { setupWallet, getProvider } from '../utils/setup.js';
 
 export type GetOwnBalanceParams = {
   symbol: string;
@@ -32,9 +31,7 @@ export type GetBalanceParams = {
 };
 
 export const getBalance = async (params: GetBalanceParams) => {
-  const provider = await Provider.create(
-    'https://mainnet.fuel.network/v1/graphql',
-  );
+  const provider = await getProvider();
 
   const allAssets = await getAllVerifiedFuelAssets();
   const asset = allAssets.find((asset) => asset.symbol === params.assetSymbol);
