@@ -5,7 +5,7 @@ Docs: https://dhaiwatpandya.gitbook.io/fuel-agent-kit/
 ## Getting Started
 
 ```bash
-npm install fuel-agent-kit
+npm install fuel-agent-kit fuels
 ```
 
 You will need two things:
