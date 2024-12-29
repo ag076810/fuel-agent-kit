@@ -12,7 +12,7 @@ test('swap exact input', async () => {
     await agent.swapExactInput({
       amount: '0.0001',
       fromSymbol: 'ETH',
-      toSymbol: 'ETH',
+      toSymbol: 'USDC',
     }),
   );
 });
