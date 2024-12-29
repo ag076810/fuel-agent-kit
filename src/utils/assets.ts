@@ -1,9 +1,56 @@
 import { CHAIN_IDS, type Asset, type NetworkFuel } from 'fuels';
+import { promises as fs } from 'fs';
+import { join } from 'path';
+import os from 'os';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+// Get project root directory (will try to save the the dev's project root)
+const CACHE_DIR = join(process.cwd(), '.fuel-agent-kit'); // change name or dir maybe? 
+const CACHE_FILE = join(CACHE_DIR, 'verified-assets.json');
+const CACHE_TTL = 1000 * 60 * 60; // 1 hour in milliseconds
+
+interface CacheData {
+  timestamp: number;
+  data: Asset[];
+}
 
 export const getVerifiedAssets = async () => {
+  try {
+    // Try to read from cache first
+    const cacheExists = await fs.access(CACHE_FILE)
+      .then(() => true)
+      .catch(() => false);
+    
+    if (cacheExists) {
+      const cacheContent = await fs.readFile(CACHE_FILE, 'utf-8');
+      const cache = JSON.parse(cacheContent) as CacheData;
+      
+      // Check if cache is still valid
+      if (Date.now() - cache.timestamp < CACHE_TTL) {
+        return cache.data;
+      }
+    } else {
+    }
+  } catch (error) {
+  }
+
   const allAssets = (await fetch(
     'https://verified-assets.fuel.network/assets.json',
   ).then((res) => res.json())) as Asset[];
+  // Save to cache
+  try {
+    await fs.mkdir(CACHE_DIR, { recursive: true });
+    await fs.writeFile(
+      CACHE_FILE,
+      JSON.stringify({
+        timestamp: Date.now(),
+        data: allAssets,
+      })
+    );
+  } catch (error) {
+  }
+
   return allAssets;
 };
 
