@@ -22,7 +22,7 @@ export interface FuelAgentConfig {
   googleGeminiApiKey?: string;
 }
 
-export class FuelAgent {  
+export class FuelAgent {
   private walletPrivateKey: string;
   private agentExecutor: AgentExecutor;
   private model: keyof typeof modelMapping;
