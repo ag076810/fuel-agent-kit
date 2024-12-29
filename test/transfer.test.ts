@@ -14,3 +14,11 @@ test('transfer USDC to another wallet', async () => {
     ),
   );
 });
+
+test('forced error', async () => {
+  console.log(
+    await agent.execute(
+      'Transfer 2000 USDC to 0x8F8afB12402C9a4bD9678Bec363E51360142f8443FB171655eEd55dB298828D1',
+    ),
+  );
+});

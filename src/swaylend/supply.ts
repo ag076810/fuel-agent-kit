@@ -13,29 +13,40 @@ export const supplyCollateral = async (
   params: SupplyCollateralParams,
   privateKey: string,
 ) => {
-  const { wallet } = await setupWallet(privateKey);
+  try {
+    const { wallet } = await setupWallet(privateKey);
 
-  const marketContractId =
-    '0x657ab45a6eb98a4893a99fd104347179151e8b3828fd8f2a108cc09770d1ebae';
-  const marketContract: Market = new Market(marketContractId, wallet);
+    const marketContractId =
+      '0x657ab45a6eb98a4893a99fd104347179151e8b3828fd8f2a108cc09770d1ebae';
+    const marketContract: Market = new Market(marketContractId, wallet);
 
-  const allAssets = await getAllVerifiedFuelAssets();
-  const asset = allAssets.find((asset) => asset.symbol === params.symbol);
-  const assetId = asset?.assetId;
+    const allAssets = await getAllVerifiedFuelAssets();
+    const asset = allAssets.find((asset) => asset.symbol === params.symbol);
+    const assetId = asset?.assetId;
 
-  const weiAmount = bn.parseUnits(params.amount, asset?.decimals);
+    const weiAmount = bn.parseUnits(params.amount, asset?.decimals);
 
-  const tx = await marketContract.functions
-    .supply_collateral()
-    .callParams({
-      forward: {
-        assetId: assetId,
-        amount: weiAmount,
-      } as any,
-    })
-    .call();
+    const tx = await marketContract.functions
+      .supply_collateral()
+      .callParams({
+        forward: {
+          assetId: assetId,
+          amount: weiAmount,
+        } as any,
+      })
+      .call();
 
-  const { transactionId } = await tx.waitForResult();
+    const { transactionId } = await tx.waitForResult();
 
-  return `Successfully supplied ${params.amount} ${params.symbol} as collateral. Explorer link: ${getTxExplorerUrl(transactionId)}`;
+    return JSON.stringify({
+      status: 'success',
+      id: transactionId,
+      link: getTxExplorerUrl(transactionId),
+    });
+  } catch (error) {
+    return JSON.stringify({
+      status: 'failure',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
 };
