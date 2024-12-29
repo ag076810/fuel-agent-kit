@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
 // Get project root directory (will try to save the the dev's project root)
-const CACHE_DIR = join(process.cwd(), '.feul-agent-kit'); // change name or dir maybe? 
+const CACHE_DIR = join(process.cwd(), '.fuel-agent-kit'); // change name or dir maybe? 
 const CACHE_FILE = join(CACHE_DIR, 'verified-assets.json');
 const CACHE_TTL = 1000 * 60 * 60; // 1 hour in milliseconds
 
