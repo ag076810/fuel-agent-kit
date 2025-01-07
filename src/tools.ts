@@ -53,7 +53,8 @@ const getOwnBalanceByAssetIdSchema = z.object({
 export const createTools = (agent: FuelAgentInterface) => [
   tool(withWalletKey(transfer, agent), {
     name: 'fuel_transfer',
-    description: 'Transfer any verified Fuel asset to another wallet using asset symbol',
+    description:
+      'Transfer any verified Fuel asset to another wallet using asset symbol',
     schema: transferSchema,
   }),
 
@@ -65,7 +66,8 @@ export const createTools = (agent: FuelAgentInterface) => [
 
   tool(withWalletKey(getOwnBalance, agent), {
     name: 'get_own_balance',
-    description: 'Get the balance of an asset in your wallet using asset symbol',
+    description:
+      'Get the balance of an asset in your wallet using asset symbol',
     schema: getOwnBalanceSchema,
   }),
 

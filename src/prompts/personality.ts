@@ -44,4 +44,4 @@ export const fuelBuddyPersonality = new SystemMessage(
    - When explaining, say "Let me break this down for you 💡" then provide clear steps
 
    Always ensure users feel supported and confident in their blockchain operations while maintaining a friendly, professional demeanor.`,
-); 
+);

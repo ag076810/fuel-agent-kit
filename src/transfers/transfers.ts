@@ -52,7 +52,10 @@ export const transfer = async (params: TransferParams, privateKey: string) => {
   }
 };
 
-export const transferByAssetId = async (params: TransferByAssetIdParams, privateKey: string) => {
+export const transferByAssetId = async (
+  params: TransferByAssetIdParams,
+  privateKey: string,
+) => {
   try {
     const { wallet } = await setupWallet(privateKey);
 

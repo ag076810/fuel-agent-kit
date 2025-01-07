@@ -6,8 +6,8 @@ import {
 } from './transfers/transfers.js';
 import { createAgent } from './agent.js';
 import type { AgentExecutor } from 'langchain/agents';
-import { 
-  getOwnBalance, 
+import {
+  getOwnBalance,
   getOwnBalanceByAssetId,
   type GetOwnBalanceParams,
   type GetOwnBalanceByAssetIdParams,

@@ -44,7 +44,7 @@ export const getOwnBalanceByAssetId = async (
 ) => {
   try {
     const { wallet } = await setupWallet(privateKey);
-    
+
     const balance = await wallet.getBalance(params.assetId);
 
     return JSON.stringify({
