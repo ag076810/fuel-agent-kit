@@ -1,4 +1,18 @@
-node_modules
-dist
+# Dependencies
+node_modules/
+dist/
+
+# Environment variables
 .env
-.fuel-agent-kit
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db

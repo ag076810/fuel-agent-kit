@@ -5,6 +5,11 @@ export type GetOwnBalanceParams = {
   symbol: string;
 };
 
+export type GetOwnBalanceByAssetIdParams = {
+  assetId: string;
+  decimals: number;
+};
+
 export const getOwnBalance = async (
   params: GetOwnBalanceParams,
   privateKey: string,
@@ -33,34 +38,18 @@ export const getOwnBalance = async (
   }
 };
 
-// ===============================
-
-export type GetBalanceParams = {
-  walletAddress: string;
-  assetSymbol: string;
-};
-
-export const getBalance = async (params: GetBalanceParams) => {
+export const getOwnBalanceByAssetId = async (
+  params: GetOwnBalanceByAssetIdParams,
+  privateKey: string,
+) => {
   try {
-    const provider = await ProviderInstance.getProvider();
-
-    const allAssets = await getAllVerifiedFuelAssets();
-    const asset = allAssets.find(
-      (asset) => asset.symbol === params.assetSymbol,
-    );
-
-    if (!asset) {
-      throw new Error(`Asset ${params.assetSymbol} not found`);
-    }
-
-    const balance = await provider.getBalance(
-      params.walletAddress,
-      asset.assetId,
-    );
+    const { wallet } = await setupWallet(privateKey);
+    
+    const balance = await wallet.getBalance(params.assetId);
 
     return JSON.stringify({
       status: 'success',
-      balance: balance.formatUnits(asset.decimals),
+      balance: balance.formatUnits(params.decimals),
     });
   } catch (error) {
     return JSON.stringify({

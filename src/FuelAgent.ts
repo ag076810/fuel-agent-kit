@@ -1,17 +1,17 @@
-import { addLiquidity, type AddLiquidityParams } from './mira/addLiquidity.js';
-import { swapExactInput, type SwapExactInputParams } from './mira/swap.js';
-import { borrowAsset, type BorrowAssetParams } from './swaylend/borrow.js';
-import {
-  supplyCollateral,
-  type SupplyCollateralParams,
-} from './swaylend/supply.js';
 import {
   transfer as walletTransfer,
+  transferByAssetId as walletTransferByAssetId,
   type TransferParams,
+  type TransferByAssetIdParams,
 } from './transfers/transfers.js';
 import { createAgent } from './agent.js';
 import type { AgentExecutor } from 'langchain/agents';
-import { getOwnBalance, type GetOwnBalanceParams } from './read/balance.js';
+import { 
+  getOwnBalance, 
+  getOwnBalanceByAssetId,
+  type GetOwnBalanceParams,
+  type GetOwnBalanceByAssetIdParams,
+} from './read/balance.js';
 import type { modelMapping } from './utils/models.js';
 
 export interface FuelAgentConfig {
@@ -67,27 +67,19 @@ export class FuelAgent {
     return response;
   }
 
-  async swapExactInput(params: SwapExactInputParams) {
-    return await swapExactInput(params, this.walletPrivateKey);
-  }
-
   async transfer(params: TransferParams) {
     return await walletTransfer(params, this.walletPrivateKey);
   }
 
-  async supplyCollateral(params: SupplyCollateralParams) {
-    return await supplyCollateral(params, this.walletPrivateKey);
-  }
-
-  async borrowAsset(params: BorrowAssetParams) {
-    return await borrowAsset(params, this.walletPrivateKey);
-  }
-
-  async addLiquidity(params: AddLiquidityParams) {
-    return await addLiquidity(params, this.walletPrivateKey);
+  async transferByAssetId(params: TransferByAssetIdParams) {
+    return await walletTransferByAssetId(params, this.walletPrivateKey);
   }
 
   async getOwnBalance(params: GetOwnBalanceParams) {
     return await getOwnBalance(params, this.walletPrivateKey);
+  }
+
+  async getOwnBalanceByAssetId(params: GetOwnBalanceByAssetIdParams) {
+    return await getOwnBalanceByAssetId(params, this.walletPrivateKey);
   }
 }

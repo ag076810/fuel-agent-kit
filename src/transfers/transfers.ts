@@ -9,6 +9,13 @@ export type TransferParams = {
   symbol: string;
 };
 
+export type TransferByAssetIdParams = {
+  to: string;
+  amount: string;
+  assetId: string;
+  decimals: number;
+};
+
 export const transfer = async (params: TransferParams, privateKey: string) => {
   try {
     const { wallet } = await setupWallet(privateKey);
@@ -25,6 +32,34 @@ export const transfer = async (params: TransferParams, privateKey: string) => {
       params.to,
       bn.parseUnits(params.amount, asset.decimals),
       assetId,
+    );
+    const { id, isStatusFailure } = await response.waitForResult();
+
+    if (isStatusFailure) {
+      console.error('TX failed');
+    }
+
+    return JSON.stringify({
+      status: 'success',
+      id,
+      link: getTxExplorerUrl(id),
+    });
+  } catch (error) {
+    return JSON.stringify({
+      status: 'failure',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+};
+
+export const transferByAssetId = async (params: TransferByAssetIdParams, privateKey: string) => {
+  try {
+    const { wallet } = await setupWallet(privateKey);
+
+    const response = await wallet.transfer(
+      params.to,
+      bn.parseUnits(params.amount, params.decimals),
+      params.assetId,
     );
     const { id, isStatusFailure } = await response.waitForResult();
 
