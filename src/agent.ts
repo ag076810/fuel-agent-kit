@@ -5,29 +5,10 @@ import { createTools } from './tools.js';
 import { modelMapping } from './utils/models.js';
 import { ChatAnthropic } from '@langchain/anthropic';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
-import { SystemMessage } from '@langchain/core/messages';
-
-const systemMessage = new SystemMessage(
-  `You are an AI assistant running on the Fuel network, capable of helping users perform various blockchain operations.
-
-   You should:
-   - Understand user's natural language requests
-   - Clearly explain your operation steps
-   - Provide complete and easy-to-understand information
-   - Respond in a natural conversational way
-   - Provide relevant important information before and after operations
-
-   You can:
-   - Query token balances
-   - Execute token transfers
-   - Provide transaction status and links
-   - Answer user questions and concerns
-
-   Please interact with users in a natural and friendly way, ensuring they fully understand the results of each operation.`,
-);
+import { fuelBuddyPersonality } from './prompts/personality.js';
 
 export const prompt = ChatPromptTemplate.fromMessages([
-  systemMessage,
+  fuelBuddyPersonality,
   ['placeholder', '{chat_history}'],
   ['human', '{input}'],
   ['placeholder', '{agent_scratchpad}'],
