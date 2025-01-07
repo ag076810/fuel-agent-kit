@@ -8,7 +8,7 @@ beforeEach(() => {
   agent = createTestAgent();
 });
 
-// 1. 使用資產 ID 查詢餘額
+// 1. Query balance using asset ID
 test('get balance by asset id', async () => {
   const result = await agent.getOwnBalanceByAssetId({
     assetId: "0xd9835efc97796abc977acbd51e1a033deb8bac954910a0b936dc82341cc8d8ee",
@@ -17,7 +17,7 @@ test('get balance by asset id', async () => {
   console.log('Balance by Asset ID:', result);
 });
 
-// 2. 使用代幣符號查詢餘額
+// 2. Query balance using token symbol
 test('get balance by symbol', async () => {
   const result = await agent.getOwnBalance({
     symbol: "ETH"
@@ -25,7 +25,7 @@ test('get balance by symbol', async () => {
   console.log('Balance by Symbol:', result);
 });
 
-// 3. 使用代幣符號轉賬
+// 3. Transfer using token symbol
 test('transfer by symbol', async () => {
   const result = await agent.transfer({
     to: "0x6e8Ba05f0D2c8F229d9214255dfC5dC8432e00702acfA00156f1f7aA4EBB4c81",
@@ -35,7 +35,7 @@ test('transfer by symbol', async () => {
   console.log('Transfer by Symbol:', result);
 });
 
-// 4. 使用資產 ID 轉賬
+// 4. Transfer using asset ID
 test('transfer by asset id', async () => {
   const result = await agent.transferByAssetId({
     to: "0x6e8Ba05f0D2c8F229d9214255dfC5dC8432e00702acfA00156f1f7aA4EBB4c81",
